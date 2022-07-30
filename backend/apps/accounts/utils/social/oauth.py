@@ -58,19 +58,11 @@ def get_access_token_from_code(backend, code):
         r = requests.post(url, data=payload)
 
         # TODO: cleanup logic
-        url = "http://example.com?" + str(r.content)
+        url = f"http://example.com?{str(r.content)}"
         params = dict(parse.parse_qsl(parse.urlsplit(url).query))
 
         return params["b'access_token"]
 
-    # google returns this:
-    # {
-    #   'access_token': 'ya29.frejf8erf.erferfeg.erfeogOS9tzAPQlNlUXitkMbmSt',
-    #   'expires_in': 3596,
-    #   'scope': 'openid https://www.googleapis.com/auth/userinfo.email',
-    #   'token_type': 'Bearer',
-    #   'id_token': 'oierfoie940j.ferferfoprek/refpekf9efoeik.long token'
-    # }
     elif backend == "google-oauth2":
         r = requests.post(url, data=payload)
 

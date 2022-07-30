@@ -18,8 +18,7 @@ class TransactionViewSet(viewsets.ViewSet):
         transactions = Transaction.objects.all()
         result_page = paginator.paginate_queryset(transactions, request)
         serializer = TransactionSerializer(result_page, many=True)
-        return_data = paginator.get_paginated_response(serializer.data)
-        return return_data
+        return paginator.get_paginated_response(serializer.data)
 
 
 class StatementViewSet(viewsets.ViewSet):
@@ -28,8 +27,7 @@ class StatementViewSet(viewsets.ViewSet):
         statement_files = StatementFile.objects.all()
         result_page = paginator.paginate_queryset(statement_files, request)
         serializer = StatementFileSerializer(result_page, many=True)
-        return_data = paginator.get_paginated_response(serializer.data)
-        return return_data
+        return paginator.get_paginated_response(serializer.data)
 
     def post(self, request):
         form_data = json.loads(request.data["form"])
@@ -54,8 +52,7 @@ class StatementViewSet(viewsets.ViewSet):
 
         statement_file_id = int(serializer.data["id"])
 
-        if True:
-            print("getting here...")
-            process_statement_file.delay(statement_file_id)
+        print("getting here...")
+        process_statement_file.delay(statement_file_id)
 
         return Response(serializer.data)

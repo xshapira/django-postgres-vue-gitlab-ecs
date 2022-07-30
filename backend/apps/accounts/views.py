@@ -88,22 +88,7 @@ def exchange_token(request, backend):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if user:
-            if user.is_active:
-                tokens = get_tokens_for_user(user)
-                # token, _ = Token.objects.get_or_create(user=user)
-                return Response(tokens)
-            else:
-                # user is not active; at some point they deleted their account,
-                # or were banned by a superuser. They can't just log
-                # in with their
-                # normal credentials anymore, so they can't log in with social
-                # credentials either.
-                return Response(
-                    {"errors": {nfe: "This user account is inactive"}},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-        else:
+        if not user:
             # Unfortunately, PSA swallows any information the backend provider
             # generated as to why specifically the authentication failed;
             # this makes it tough to debug except by examining the server logs.
@@ -111,6 +96,19 @@ def exchange_token(request, backend):
                 {"errors": {nfe: "Authentication Failed"}},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        if not user.is_active:
+            # user is not active; at some point they deleted their account,
+            # or were banned by a superuser. They can't just log
+            # in with their
+            # normal credentials anymore, so they can't log in with social
+            # credentials either.
+            return Response(
+                {"errors": {nfe: "This user account is inactive"}},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        tokens = get_tokens_for_user(user)
+        # token, _ = Token.objects.get_or_create(user=user)
+        return Response(tokens)
 
 
 class Profile(APIView):

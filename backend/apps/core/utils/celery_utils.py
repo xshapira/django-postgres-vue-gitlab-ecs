@@ -81,5 +81,4 @@ def publish_queue_metrics(queue_names):
 
 def publish_celery_metrics():
     print("starting task")
-    queue_metrics = publish_queue_metrics(["default"])
-    return queue_metrics
+    return publish_queue_metrics(["default"])

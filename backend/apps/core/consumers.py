@@ -32,10 +32,7 @@ class CoreConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         print("received message")
         user = self.scope.get("user", "")
-        if user.is_anonymous:
-            user = None
-        else:
-            user = user.email
+        user = None if user.is_anonymous else user.email
         cached_value = r.incr("cached_value", amount=3)
         text_data_json = json.loads(text_data)
         message = text_data_json["message"]

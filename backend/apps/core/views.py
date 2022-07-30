@@ -19,12 +19,7 @@ r = settings.REDIS
 
 class DebugRedis(viewsets.ViewSet):
     def get(self, request):
-        count = None
-
-        value = r.get("cached_value")
-
-        if value:
-            count = value
+        count = value if (value := r.get("cached_value")) else None
         return JsonResponse({"count": count})
 
     def post(self, request):
@@ -39,8 +34,7 @@ class DebugRedis(viewsets.ViewSet):
 
 
 def health_check(request):
-    response = JsonResponse({"message": "OK"})
-    return response
+    return JsonResponse({"message": "OK"})
 
 
 @api_view(["POST"])
@@ -58,13 +52,12 @@ def sleep_task_view(request):
 @permission_classes([])
 @authentication_classes([])
 def celery_metrics(request):
-    if request.data.get("celery_metrics_token") == os.environ.get(
+    if request.data.get("celery_metrics_token") != os.environ.get(
         "CELERY_METRICS_TOKEN"
     ):
-        published_celery_metrics = publish_celery_metrics()
-        return JsonResponse(published_celery_metrics)
-    else:
         return JsonResponse({"message": "Unauthorized"}, status=401)
+    published_celery_metrics = publish_celery_metrics()
+    return JsonResponse(published_celery_metrics)
 
 
 def send_test_email(request):

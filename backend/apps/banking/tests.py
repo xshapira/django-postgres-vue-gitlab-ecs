@@ -19,7 +19,7 @@ def test_upload_statement_file():
     client = login()
 
     filename = "test.csv"
-    file_path = "apps/banking/fixtures/" + filename
+    file_path = f"apps/banking/fixtures/{filename}"
 
     form = {"month": "2019-01-19"}
 
